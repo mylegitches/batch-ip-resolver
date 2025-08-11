@@ -18,9 +18,42 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Run script with sample input
         run: |
           cp input.sample.txt input.txt
           python ip_resolver.py
           ls -la
+
+      - name: Smoke test web UI
+        run: |
+          python - << 'PY'
+          import threading, time, urllib.request
+          import subprocess, sys
+          
+          # Start Flask app
+          p = subprocess.Popen([sys.executable, 'app.py'])
+          try:
+              # Wait for server
+              for _ in range(30):
+                  try:
+                      urllib.request.urlopen('http://127.0.0.1:5000', timeout=1)
+                      break
+                  except Exception:
+                      time.sleep(1)
+              else:
+                  raise RuntimeError('Flask did not start in time')
+
+              # Fetch index
+              with urllib.request.urlopen('http://127.0.0.1:5000', timeout=3) as resp:
+                  html = resp.read().decode('utf-8', 'ignore')
+                  assert 'Batch IP Resolver' in html
+          finally:
+              p.terminate()
+              p.wait(timeout=10)
+          PY
 

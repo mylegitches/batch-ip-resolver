@@ -1,2 +1,2 @@
-# No external dependencies required
+Flask>=3.0,<4
 

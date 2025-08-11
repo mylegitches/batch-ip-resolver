@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Batch IP Resolver</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Batch IP Resolver</h1>
+      <p>Paste domains or upload a text file (one domain per line). Prefixes like http:// or https:// are handled.</p>
+
+      <form method="post" action="/resolve" enctype="multipart/form-data" class="card">
+        <label for="domains" class="label">Domains</label>
+        <textarea id="domains" name="domains" rows="8" placeholder="example.com&#10;openai.com&#10;python.org">{{ submitted_text }}</textarea>
+
+        <div class="row">
+          <div class="col">
+            <label for="file" class="label">Or upload file</label>
+            <input id="file" name="file" type="file" accept=".txt" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Resolve</button>
+        </div>
+      </form>
+
+      {% if results %}
+      <div class="results card">
+        <div class="results-header">
+          <h2>Results</h2>
+          <form method="post" action="/resolve">
+            <input type="hidden" name="domains" value="{{ submitted_text }}" />
+            <button type="submit" name="download" value="tsv">Download TSV</button>
+          </form>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>URL</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for url, ip in results %}
+            <tr>
+              <td>{{ url }}</td>
+              <td>{{ ip }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+  </html>
+
+
