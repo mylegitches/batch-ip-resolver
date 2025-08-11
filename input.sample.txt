@@ -1,0 +1,4 @@
+example.com
+openai.com
+python.org
+
