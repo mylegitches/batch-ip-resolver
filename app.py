@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from io import StringIO
+import os
 from typing import Iterable, List, Tuple
 
 from flask import Flask, Response, render_template, request
@@ -65,6 +66,12 @@ def resolve() -> Response | str:
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port_env = os.environ.get("PORT", "5000")
+    try:
+        port = int(port_env)
+    except ValueError:
+        port = 5000
+    debug_flag = os.environ.get("DEBUG", "false").lower() in {"1", "true", "yes"}
+    app.run(host="0.0.0.0", port=port, debug=debug_flag)
 
 

@@ -1,5 +1,7 @@
 ### Batch IP Resolver
 
+[![CI](https://github.com/mylegitches/batch-ip-resolver/actions/workflows/ci.yml/badge.svg)](https://github.com/mylegitches/batch-ip-resolver/actions/workflows/ci.yml)
+
 Resolve IP addresses for a list of domains in bulk and save results to a timestamped TSV file.
 
 ### Features
@@ -48,6 +50,21 @@ python app.py
 ```
 
 Then open `http://127.0.0.1:5000` in your browser. Paste domains or upload a `.txt` file, then click Resolve. You can also download results as a TSV file.
+
+### Docker
+
+Build and run locally:
+
+```bash
+docker build -t batch-ip-resolver .
+docker run -p 5000:5000 --rm batch-ip-resolver
+```
+
+Visit `http://127.0.0.1:5000`.
+
+Environment variables:
+- `PORT`: port to bind (default 5000)
+- `DEBUG`: set to `true` to enable Flask debug when running via `python app.py`
 
 ### Input format
 - One domain per line

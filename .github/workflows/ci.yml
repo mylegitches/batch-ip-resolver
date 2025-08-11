@@ -57,3 +57,21 @@ jobs:
               p.wait(timeout=10)
           PY
 
+      - name: Build Docker image
+        run: |
+          docker build -t batch-ip-resolver:ci .
+
+      - name: Run Docker container and test
+        run: |
+          docker run -d -p 5000:5000 --name batch-ip-resolver-ci batch-ip-resolver:ci
+          # wait for container
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:5000 >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -sSf http://127.0.0.1:5000 | grep -q "Batch IP Resolver"
+          docker logs batch-ip-resolver-ci || true
+          docker rm -f batch-ip-resolver-ci
+
